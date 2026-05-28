@@ -43,7 +43,7 @@ fn site_keys(lines: &[String]) -> Vec<(String, String, String, String)> {
         .map(|l| {
             let f: Vec<&str> = l.splitn(10, '\t').collect();
             (
-                f.get(0).unwrap_or(&"").to_string(),
+                f.first().unwrap_or(&"").to_string(),
                 f.get(1).unwrap_or(&"").to_string(),
                 f.get(3).unwrap_or(&"").to_string(),
                 f.get(4).unwrap_or(&"").to_string(),

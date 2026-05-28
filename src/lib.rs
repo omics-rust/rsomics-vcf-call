@@ -286,7 +286,7 @@ mod tests {
 
     #[test]
     fn header_passthrough() {
-        let vcf = format!("{HEADER}");
+        let vcf = HEADER.to_owned();
         let out = call_str(&vcf, false);
         assert!(out.contains("##fileformat=VCFv4.2"));
         assert!(out.contains("#CHROM"));
