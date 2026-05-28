@@ -1,0 +1,10 @@
+##fileformat=VCFv4.2
+##contig=<ID=chr1,length=1000000>
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Phred-scaled genotype likelihoods">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total depth">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE
+chr1	100	.	A	G	.	.	DP=30	DP:PL	30:0,30,200
+chr1	200	.	C	T	.	.	DP=25	DP:PL	25:100,0,80
+chr1	300	.	G	A	.	.	DP=40	DP:PL	40:100,80,0
+chr1	400	.	T	C	.	.	DP=20	DP:PL	20:0,50,150
