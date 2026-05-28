@@ -91,13 +91,11 @@ pub fn call(
         let pl_idx = pl_idx.unwrap();
 
         // Check depth filter
-        if min_depth > 1 {
-            if let Some(dp_i) = dp_idx {
-                let dp_str = sample_col.split(':').nth(dp_i).unwrap_or("0");
-                let dp: u32 = dp_str.parse().unwrap_or(0);
-                if dp < min_depth {
-                    continue;
-                }
+        if min_depth > 1 && let Some(dp_i) = dp_idx {
+            let dp_str = sample_col.split(':').nth(dp_i).unwrap_or("0");
+            let dp: u32 = dp_str.parse().unwrap_or(0);
+            if dp < min_depth {
+                continue;
             }
         }
 
@@ -218,10 +216,10 @@ pub fn call(
         let (new_format, new_sample) = if has_gt {
             // Replace existing GT and append GQ if not present
             let gq_idx = format_fields.iter().position(|&f| f == "GQ");
-            if gq_idx.is_some() {
+            if let Some(gi) = gq_idx {
                 let mut sf: Vec<String> = sample_fields.iter().map(|s| s.to_string()).collect();
                 sf[0] = gt_str.clone();
-                sf[gq_idx.unwrap()] = format!("{gq:.0}");
+                sf[gi] = format!("{gq:.0}");
                 (format_col.to_string(), sf.join(":"))
             } else {
                 let mut sf: Vec<String> = sample_fields.iter().map(|s| s.to_string()).collect();
