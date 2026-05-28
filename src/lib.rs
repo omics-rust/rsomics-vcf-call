@@ -90,10 +90,12 @@ pub fn call(
 
         let pl_idx = pl_idx.unwrap();
 
-        // Check depth filter
-        if min_depth > 1 && let Some(dp_i) = dp_idx {
-            let dp_str = sample_col.split(':').nth(dp_i).unwrap_or("0");
-            let dp: u32 = dp_str.parse().unwrap_or(0);
+        // Check depth filter: skip site if DP < min_depth when filtering is active.
+        if min_depth > 1 {
+            let dp = dp_idx
+                .and_then(|i| sample_col.split(':').nth(i))
+                .and_then(|s| s.parse::<u32>().ok())
+                .unwrap_or(0);
             if dp < min_depth {
                 continue;
             }
