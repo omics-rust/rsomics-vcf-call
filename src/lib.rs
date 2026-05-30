@@ -60,7 +60,6 @@ pub fn call(
     for line_result in input.lines() {
         let line = line_result.map_err(RsomicsError::Io)?;
 
-        // Pass through header lines unchanged
         if line.starts_with('#') {
             writeln!(output, "{line}").map_err(RsomicsError::Io)?;
             continue;
@@ -76,7 +75,6 @@ pub fn call(
         let format_col = if fields.len() > 8 { fields[8] } else { "" };
         let sample_col = if fields.len() > 9 { fields[9] } else { "" };
 
-        // Find PL and DP indices in the FORMAT column
         let pl_idx = format_col.split(':').position(|f| f == "PL");
         let dp_idx = format_col.split(':').position(|f| f == "DP");
 
@@ -101,7 +99,6 @@ pub fn call(
             }
         }
 
-        // Parse PL values from the sample column
         let pl_str = sample_col.split(':').nth(pl_idx).unwrap_or(".");
         if pl_str == "." {
             if all_sites {
@@ -118,7 +115,6 @@ pub fn call(
             continue;
         }
 
-        // Count alleles from ALT field
         let alt = fields[4];
         let n_alleles = if alt == "." || alt.is_empty() {
             1usize
@@ -138,7 +134,6 @@ pub fn call(
 
         let n_pl = pls.len();
 
-        // Compute unnormalised posterior for each genotype
         let mut posteriors = Vec::with_capacity(n_pl);
         let mut gt_idx = 0usize;
         let mut best_post = f64::NEG_INFINITY;
@@ -196,7 +191,6 @@ pub fn call(
             0.0_f32
         };
 
-        // QUAL = GQ of the best non-ref call; 0 for homref
         let qual = if is_variant { gq } else { 0.0 };
 
         if !is_variant && !all_sites {
@@ -207,10 +201,8 @@ pub fn call(
             continue;
         }
 
-        // Build GT string: "0/0", "0/1", "1/1", etc.
         let gt_str = format!("{best_gt_i}/{best_gt_j}");
 
-        // Rebuild sample column with GT prepended (or replacing existing GT)
         let format_fields: Vec<&str> = format_col.split(':').collect();
         let sample_fields: Vec<&str> = sample_col.split(':').collect();
 
@@ -229,13 +221,11 @@ pub fn call(
                 (format_col.to_string(), sf.join(":"))
             }
         } else {
-            // Prepend GT:GQ to FORMAT and sample
             let new_fmt = format!("GT:GQ:{format_col}");
             let new_smp = format!("{gt_str}:{gq:.0}:{sample_col}");
             (new_fmt, new_smp)
         };
 
-        // Reconstruct the QUAL field
         let qual_str = if is_variant {
             format!("{qual:.1}")
         } else {
